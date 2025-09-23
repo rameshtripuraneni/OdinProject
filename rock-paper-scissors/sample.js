@@ -1,77 +1,88 @@
-
 let humanScore = 0;
 let computerScore = 0;
-//Get the human choice through input
-function getHumanChoice()
-{
-    const humanTurn = prompt("Enter your choice for the game");
-    return humanTurn;
-}
-//Generated the computer choice randomly
-function getComputerChoice()
-{
-    const gameWords = ["Rock", "Paper", "Scissors"];
-    const randomIndex = Math.floor(Math.random() * gameWords.length);
-    const randomWord = gameWords[randomIndex];
-    return randomWord;
+const WIN_SCORE = 5;
 
-}
+const humanScoreEl = document.getElementById("humanScore");
+const computerScoreEl = document.getElementById("computerScore");
+const roundResultEl = document.getElementById("roundResult");
+const finalResultEl = document.getElementById("finalResult");
+const statusEl = document.getElementById("status");
+const buttons = document.querySelectorAll(".buttons button");
+const resetBtn = document.getElementById("resetBtn");
 
-//Compares the human's choice and computer's choice.
-//Also returns the score
-function playRound(humanChoice,computerChoice)
-{
-    const choice = humanChoice.toLowerCase();
-    const comp = computerChoice.toLowerCase();
-    if(choice === comp)
-    {
-        console.log("It's a tie");
-
-    }
-    else if((choice === "rock" && comp === "scissors") ||
-            (choice === "paper" && comp === "rock") ||
-            (choice === "scissors" && comp === "paper"))
-            {
-                 humanScore++;
-                console.log("Human won the game because human choice is "  + choice + " and the computer choice is " + computerChoice + " and the score is " + humanScore);
-
-
-
-
-            }
-            else
-            {
-                computerScore++;
-                console.log("Computer won the game because human choice is " + choice + " and the computer choice is " + computerChoice + " and the score is " + computerScore);
-
-
-            }
+function getComputerChoice() {
+  const options = ["rock", "paper", "scissors"];
+  const idx = Math.floor(Math.random() * options.length);
+  return options[idx];
 }
 
-//User chooses how many rounds that are to be played and returns the total score of the rounds
-function playMultipleRounds(rounds)
-{
-    humanScore = 0;
-    computerScore = 0;
-    for( let i=1; i<=rounds; i++)
-    {
-        const human = getHumanChoice();
-        if(human === null)
-        {
-            console.log(" Game cancelled.")
-            break;
-        }
-        const computer = getComputerChoice();
-        playRound(human, computer);
-    }
-    return{ human:humanScore, computer: computerScore};
+function playRound(humanChoice, computerChoice) {
+  const h = humanChoice.toLowerCase();
+  const c = computerChoice.toLowerCase();
 
+  if (h === c) return "tie";
+  const humanWins =
+    (h === "rock" && c === "scissors") ||
+    (h === "paper" && c === "rock") ||
+    (h === "scissors" && c === "paper");
+  return humanWins ? "human" : "computer";
 }
 
+function updateUIAfterRound(h, c, winner) {
+  if (winner === "tie") {
+    roundResultEl.textContent = `It's a tie! You: ${h} | Computer: ${c}`;
+  } else if (winner === "human") {
+    humanScore++;
+    roundResultEl.textContent = `You win this round! ${h} beats ${c}`;
+  } else {
+    computerScore++;
+    roundResultEl.textContent = `Computer wins this round! ${c} beats ${h}`;
+  }
 
-const rounds = Number(prompt("How many rounds?"));
-const finalScores = playMultipleRounds(rounds);
-console.log(`Final Scores — You: ${finalScores.human} | Computer: ${finalScores.computer}`);
+  humanScoreEl.textContent = humanScore;
+  computerScoreEl.textContent = computerScore;
+  statusEl.textContent = `First to ${WIN_SCORE} points wins.`;
 
+  if (humanScore >= WIN_SCORE || computerScore >= WIN_SCORE) {
+    endGame();
+  }
+}
 
+function endGame() {
+  // disable buttons
+  buttons.forEach(b => (b.disabled = true));
 
+  if (humanScore > computerScore) {
+    finalResultEl.textContent = "🎉 You won the game!";
+  } else if (humanScore < computerScore) {
+    finalResultEl.textContent = "🤖 Computer won the game.";
+  } else {
+    finalResultEl.textContent = "It's a draw.";
+  }
+}
+
+function resetGame() {
+  humanScore = 0;
+  computerScore = 0;
+  humanScoreEl.textContent = "0";
+  computerScoreEl.textContent = "0";
+  roundResultEl.textContent = "";
+  finalResultEl.textContent = "";
+  statusEl.textContent = "Pick Rock, Paper, or Scissors.";
+  buttons.forEach(b => (b.disabled = false));
+}
+
+// Event listeners for the three choice buttons
+buttons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const human = btn.dataset.choice;           // "rock" | "paper" | "scissors"
+    const computer = getComputerChoice();
+    const winner = playRound(human, computer);
+    updateUIAfterRound(human, computer, winner);
+  });
+});
+
+resetBtn.addEventListener("click", resetGame);
+
+// initial status
+statusEl.textContent = "Pick Rock, Paper, or Scissors.";

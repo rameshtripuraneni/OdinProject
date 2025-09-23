@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="app">
+<h1>Rock • Paper • Scissors</h1>
 
-<script src="javascript.js">
-  </script>
+<div class="buttons">
+    <button data-choice="rock">Rock</button>
+    <button data-choice="paper">Paper</button>
+    <button data-choice="scissors">Scissors</button>
+</div>
 
+<div id="status" class="status"></div>
+
+<div class="scoreboard">
+    <div>You: <span id="humanScore">0</span></div>
+    <div>Computer: <span id="computerScore">0</span></div>
+</div>
+
+<div id="roundResult" class="round-result"></div>
+<div id="finalResult" class="final-result"></div>
+
+<div class="actions">
+    <button id="resetBtn">Reset</button>
+</div>
+
+<script src="sample.js"></script>
 </body>
-
-
-    <title>Test JavaScript</title>
-</head>
-<body>
-<script src="sample.js">
-</script>
-
-</body>
-
 </html>
